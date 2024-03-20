@@ -2,6 +2,7 @@
 
 import { useMessage } from "@/lib/store/messages";
 import Message from "./Message";
+import { DeleteAlert } from "./MessageActions";
 
 const ListMessages = () => {
   const messages = useMessage((state) => state.messages);
@@ -13,6 +14,7 @@ const ListMessages = () => {
           return <Message key={index} message={value} />;
         })}
       </div>
+      <DeleteAlert />
     </div>
   );
 };
