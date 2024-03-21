@@ -32,6 +32,9 @@ const Message = ({ message }: { message: Imessage }) => {
             <h1 className="text-sm text-gray-400">
               {new Date(message.created_at).toDateString()}
             </h1>
+            {message.is_edit && (
+              <h1 className="text-sm text-gray-400">edited</h1>
+            )}
           </div>
           {message.users?.id === user?.id && <MessageMenu message={message} />}
         </div>
@@ -43,7 +46,7 @@ const Message = ({ message }: { message: Imessage }) => {
 
 export default Message;
 
-const MessageMenu = ({message}: {message : Imessage}) => {
+const MessageMenu = ({ message }: { message: Imessage }) => {
   const setActionMessage = useMessage((state) => state.setActionMessage);
   return (
     <DropdownMenu>
