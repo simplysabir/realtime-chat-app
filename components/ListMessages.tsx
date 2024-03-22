@@ -10,6 +10,7 @@ import { ArrowDown } from "lucide-react";
 const ListMessages = () => {
   const scrollRef = useRef() as React.MutableRefObject<HTMLDivElement>;
   const [userScrolled, setUserScrolled] = useState(false);
+  const [notification, setNotification] = useState(0);
   const {
     messages,
     addMessage,
@@ -42,6 +43,13 @@ const ListMessages = () => {
               addMessage(newMessage as Imessage);
             }
           }
+          const scrollContainer = scrollRef.current;
+          if (
+            scrollContainer.scrollTop <
+            scrollContainer.scrollHeight - scrollContainer.clientHeight - 10
+          ) {
+            setNotification((current) => current + 1);
+          }
         }
       )
       .on(
@@ -67,7 +75,7 @@ const ListMessages = () => {
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
-    if (scrollContainer) {
+    if (scrollContainer && !userScrolled) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
   }, [messages]);
@@ -79,37 +87,56 @@ const ListMessages = () => {
         scrollContainer.scrollTop <
         scrollContainer.scrollHeight - scrollContainer.clientHeight - 10;
       setUserScrolled(isScroll);
+      if (
+        scrollContainer.scrollTop ===
+        scrollContainer.scrollHeight - scrollContainer.clientHeight
+      ) {
+        setNotification(0);
+      }
     }
   };
 
   const scrollDown = () => {
+    setNotification(0);
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   };
   return (
-    <div
-      className="flex-1 flex flex-col p-5 h-full overflow-y-auto"
-      ref={scrollRef}
-      onScroll={handleOnScroll}
-    >
-      <div className="flex-1"></div>
-      <div className="space-y-7">
-        {messages.map((value, index) => {
-          return <Message key={index} message={value} />;
-        })}
+    <>
+      <div
+        className="flex-1 flex flex-col p-5 h-full overflow-y-auto"
+        ref={scrollRef}
+        onScroll={handleOnScroll}
+      >
+        <div className="flex-1"></div>
+        <div className="space-y-7">
+          {messages.map((value, index) => {
+            return <Message key={index} message={value} />;
+          })}
+        </div>
+
+        <DeleteAlert />
+        <EditAlert />
       </div>
       {userScrolled && (
-        <div className="absolute bottom-20 right-1/2">
-          <div
-            className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center mx-auto border cursor-pointer hover:scale-110 transition-all"
-            onClick={scrollDown}
-          >
-            <ArrowDown />
-          </div>
+        <div className="absolute bottom-20 w-full">
+          {notification ? (
+            <div
+              className="w-36 mx-auto bg-blue-500 p-1 rounded-xl cursor-pointer"
+              onClick={scrollDown}
+            >
+              <h1>New {notification} messages</h1>
+            </div>
+          ) : (
+            <div
+              className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center mx-auto border cursor-pointer hover:scale-110 transition-all"
+              onClick={scrollDown}
+            >
+              <ArrowDown />
+            </div>
+          )}
         </div>
       )}
-      <DeleteAlert />
-      <EditAlert />
-    </div>
+    </>
   );
 };
 
