@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import ChatPresence from "./ChatPresence";
+import DarkMode from "./DarkMode";
 
 const ChatHeader = ({ user }: { user: User | undefined }) => {
   const router = useRouter();
@@ -30,11 +31,14 @@ const ChatHeader = ({ user }: { user: User | undefined }) => {
           <h1 className="text-xl font-bold">Daily Chat</h1>
           <ChatPresence />
         </div>
+        <div className="flex items-center gap-3">
         {user ? (
           <Button onClick={handleLogout}>Logout</Button>
         ) : (
           <Button onClick={handleLoginWithGithub}>Login</Button>
         )}
+        <DarkMode />
+        </div>
       </div>
     </div>
   );
